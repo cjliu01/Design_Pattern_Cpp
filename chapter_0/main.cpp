@@ -68,6 +68,15 @@ protected:
     string getShoutSound() { return string("哞"); } 
 };
 
+class Monkey: public Animal
+{
+public:
+    Monkey(): Animal() {}
+    Monkey(const string &name): Animal(name) {}
+protected:
+    string getShoutSound() { return string("呔"); } 
+};
+
 class MachineCat: public Cat, Change
 {
 public:
@@ -80,6 +89,19 @@ public:
 
 };
 
+class StoneMonkey: public Monkey, Change
+{
+public:
+    StoneMonkey(): Monkey(), Change() {}
+    StoneMonkey(const string &name): Monkey(name), Change() {}
+    string changeThing(const string& thing)
+    {
+        return shout() + string(", 我有万能的口袋, 我可变出") + thing;
+    }
+protected:
+    string getShoutSound() { return string("俺老孙来也"); } 
+};
+
 int main()
 {
     Dog dog1(string("阿毛"));
@@ -88,16 +110,18 @@ int main()
     Sheep sheep(string("娇娇"));
     Cat cat2(string("咪咪"));
     MachineCat machineCat(string("叮铛"));
+    StoneMonkey stoneMonkey(string("孙悟空"));
     vector<Animal*> animals;
     animals.push_back(&dog1);
     animals.push_back(&cattle);
     animals.push_back(&cat1);
     animals.push_back(&cat2);
     animals.push_back(&sheep);
-    animals.erase(animals.begin() + 4);
+    animals.push_back(&stoneMonkey);
 
     for (int i = 0; i < animals.size(); i++)
         cout << (*animals[i]).shout() << endl;
-    cout << machineCat.changeThing(string("各种各样的东西! "));
+    cout << machineCat.changeThing(string("各种各样的东西! ")) << endl;
+    cout << stoneMonkey.changeThing(string("金箍棒! "));
     return 0;
 }
