@@ -7,3 +7,4 @@
 * chapte_6: 介绍了装饰模式
 * chapter_7: 介绍了代理模式
 * chapter_8: 介绍了工厂方法模式
+* chapter_9: 介绍了原型模式
