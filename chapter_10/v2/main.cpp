@@ -31,7 +31,7 @@ protected:
 
 class TestPaperA: public TestPaper
 {
-public:
+protected:
     string answer1() { return string("b"); }
     string answer2() { return string("a"); }
     string answer3() { return string("c"); }
@@ -39,7 +39,7 @@ public:
 
 class TestPaperB: public TestPaper
 {
-public:
+protected:
     string answer1() { return string("d"); }
     string answer2() { return string("b"); }
     string answer3() { return string("a"); }
@@ -53,6 +53,7 @@ int main()
     studentA.testQuestion2();
     studentA.testQuestion3();
 
+    cout << "Ñ§ÉúÒÒ³­µÄÊÔ¾í: " << endl; 
     TestPaperB studentB;
     studentB.testQuestion1();
     studentB.testQuestion2();
