@@ -10,9 +10,10 @@
 * chapter_8: 介绍了工厂方法模式
 * chapter_9: 介绍了原型模式
 * chapter_10: 介绍了模板方法模式
-* chapter_12:介绍了外观模式
-* chapter_13:介绍了建筑者模式
-* chapter_14:介绍了观察者模式
-* chapter_15:介绍了抽象工厂模式
-* chapter_16:介绍了状态模式
-* chapter_17:介绍了适配器模式
+* chapter_12: 介绍了外观模式
+* chapter_13: 介绍了建筑者模式
+* chapter_14: 介绍了观察者模式
+* chapter_15: 介绍了抽象工厂模式
+* chapter_16: 介绍了状态模式
+* chapter_17: 介绍了适配器模式
+* chapter_18: 介绍了备忘录模式
