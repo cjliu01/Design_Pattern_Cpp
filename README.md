@@ -1,6 +1,6 @@
 # 大话设计模式(C++实现)
 
-本仓库为[大话设计模式](https://book.douban.com/subject/2334288/)的C++语言实现
+本仓库为[大话设计模式](https://book.douban.com/subject/36116620)的C++语言实现
 
 * chapter_0: 介绍了面向对象的基础知识
 * chapter_1: 介绍了简单工厂模式
@@ -28,5 +28,5 @@
 * chapter_27: 介绍了解释器模式
 * chapter_28: 介绍了访问者模式
 
-
-
+[大话设计模式](https://book.douban.com/subject/2334288/)第一版的[PDF](https://pan.baidu.com/s/1kl_5bHWYL6timgO4OTNwuA 
+) `提取码：2345`
