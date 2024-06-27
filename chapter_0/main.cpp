@@ -77,7 +77,7 @@ protected:
     string getShoutSound() { return string("߾"); } 
 };
 
-class MachineCat: public Cat, Change
+class MachineCat: public Cat, public Change
 {
 public:
     MachineCat(): Cat(), Change() {}
@@ -89,7 +89,7 @@ public:
 
 };
 
-class StoneMonkey: public Monkey, Change
+class StoneMonkey: public Monkey, public Change
 {
 public:
     StoneMonkey(): Monkey(), Change() {}
