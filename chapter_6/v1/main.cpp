@@ -23,7 +23,7 @@ private:
 
 int main()
 {
-    Person xc(string("小菜"));
+    Person xc("小菜");
     cout << "第一种装扮: ";
     xc.wearTShirts();
     xc.wearBigTrouser();

@@ -80,7 +80,7 @@ int main()
             totalPrice = cs->acceptCash(price, num);
             total += totalPrice;
             delete cs;
-            cs = 0;
+            cs = nullptr;
 
             cout << "单价: " << price << "元 数量: " << num 
                 << " 合计: " << totalPrice << "元" << endl;

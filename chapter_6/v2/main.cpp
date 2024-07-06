@@ -58,7 +58,7 @@ public:
 
 int main()
 {
-    Person xc(string("小菜"));
+    Person xc("小菜");
 
     cout << "第一种装扮: ";
     Finery *dtx = new TShirt();
