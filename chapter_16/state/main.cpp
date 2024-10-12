@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -7,8 +8,9 @@ class State
 {
 public:
     State(const string& className=string("")): className(className) {}
-    virtual void Handle(Context& context) = 0;
     string getClassName() { return className; }
+    virtual void Handle(Context& context) = 0;
+    virtual ~State() = default;
 protected:
     string className;  
 };
@@ -17,7 +19,7 @@ class ConcreteStateA: public State
 {
 public:
     ConcreteStateA(const string& className=string("ConcreteStateA")): State(className) {}
-    void Handle(Context& context);
+    void Handle(Context& context) override;
 
 };
 
@@ -25,32 +27,25 @@ class ConcreteStateB: public State
 {
 public: 
     ConcreteStateB(const string& className=string("ConcreteStateB")): State(className) {}
-    void Handle(Context& context);
+    void Handle(Context& context) override;
 };
 
 class Context
 {
 public:
-    Context(State* state_=0): state(state_) {}
-    State* getState() { return state; }
+    Context(State* state_=nullptr): state(state_) {}
+    shared_ptr<State> getState() { return state; }
     void setState(State* state_) 
     {
-        //·ÀÖ¹ÄÚ´æÐ¹Â©
-        delete state;
-        state = nullptr;
-        state = state_;
+        state.reset(state_);
         cout << "µ±Ç°×´Ì¬" << state->getClassName() << endl;
     }
-    void request()
-    {
-        state->Handle(*this);
-    }
-    ~Context() { delete state; }
+    void request() { state->Handle(*this); }
 private:
-    State *state;
+    shared_ptr<State> state;
 };
 
-void ConcreteStateA::Handle(Context& context)
+void ConcreteStateA::Handle(Context& context) 
 {
     context.setState(new ConcreteStateB);
 }

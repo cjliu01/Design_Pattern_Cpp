@@ -1,5 +1,6 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ class IUser
 public:
     virtual void insert(User& user) = 0;
     virtual User getUser(int id) = 0;
+    virtual ~IUser() = default;
 };
 
 class SqlserverUser: public IUser
@@ -65,6 +67,7 @@ class IDepartment
 public:
     virtual void insert(Department& department) = 0;
     virtual Department getDepartment(int id) = 0;   
+    virtual ~IDepartment() = default;
 };
 
 class SqlserverDepartment: public IDepartment
@@ -92,31 +95,25 @@ public:
 class Factory
 {
 public:
-    Factory(): user(0), department(0) {}
-    virtual IUser* createUser() = 0;
-    virtual IDepartment* createDepartment() = 0;
-    ~Factory() 
-    { 
-        delete user;
-        delete department;
-    }
+    virtual shared_ptr<IUser> createUser() = 0;
+    virtual shared_ptr<IDepartment> createDepartment() = 0;
 protected:
-    IUser* user;
-    IDepartment* department;
+    shared_ptr<IUser> user;
+    shared_ptr<IDepartment> department;
 };
 
 class SqlserverFactory: public Factory
 {
 public:
-    IUser* createUser() 
+    shared_ptr<IUser> createUser() 
     { 
-        user = new SqlserverUser(); 
+        user = make_shared<SqlserverUser>(); 
         return user;    
     }
 
-    IDepartment* createDepartment()
+    shared_ptr<IDepartment> createDepartment()
     {
-        department = new SqlserverDepartment();
+        department = make_shared<SqlserverDepartment>();
         return department;
     }
 };
@@ -124,15 +121,15 @@ public:
 class AccessFactory: public Factory
 {
 public:
-    IUser* createUser() 
+    shared_ptr<IUser> createUser() 
     { 
-        user = new AccessUser(); 
+        user = make_shared<AccessUser>(); 
         return user;    
     }
 
-    IDepartment* createDepartment()
+    shared_ptr<IDepartment> createDepartment()
     {
-        department = new AccessDepartment();
+        department = make_shared<AccessDepartment>();
         return department;
     }
 };
@@ -141,15 +138,14 @@ int main()
 {
     User user;
     Department department;
-    Factory* factory = new SqlserverFactory();
-    IUser* iu = factory->createUser();
+    shared_ptr<Factory> factory = make_shared<AccessFactory>();
+    shared_ptr<IUser> iu = factory->createUser();
     iu->insert(user);
     iu->getUser(1);
 
-    IDepartment* idept = factory->createDepartment();
+    shared_ptr<IDepartment> idept = factory->createDepartment();
     idept->insert(department);
     idept->getDepartment(2);
 
-    delete factory;
     return 0;
 }

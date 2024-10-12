@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -12,8 +13,9 @@ public:
 class Command
 {
 public:
-    virtual void excuteCommand() = 0;
     Command(const Barbecuer& receiver): receiver(receiver) {}
+    virtual void excuteCommand() = 0;
+    virtual ~Command() = default;
 protected:
     Barbecuer receiver;
 };
@@ -22,21 +24,21 @@ class BakeMuttonCommand: public Command
 {
 public:
     BakeMuttonCommand(const Barbecuer& receiver): Command(receiver) {}
-    void excuteCommand() { receiver.bakeMutton(); }
+    void excuteCommand() override { receiver.bakeMutton(); }
 };
 
 class BakeChickenWingCommand: public Command
 {
 public:
     BakeChickenWingCommand(const Barbecuer& receiver): Command(receiver) {}
-    void excuteCommand() { receiver.bakeChickenWing();}
+    void excuteCommand() override { receiver.bakeChickenWing();}
 };
 
 class Waiter
 {
 public:
     Waiter(): command(nullptr) {}
-    void setOrder(Command* command) { this->command = command; }
+    void setOrder(Command* c) { command = c; }
     void notifyCommand() { command->excuteCommand(); }
 private:
     Command* command;

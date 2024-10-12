@@ -1,15 +1,16 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+
 using namespace std;
 
 class Request
 {
 public:
-    string getRequestType() { return requestType; }
+    string getRequestType() const { return requestType; }
     void setRequestType(const string& requestType) { this->requestType = requestType; }
-    string getRequestContent() { return requestContent; }
+    string getRequestContent() const { return requestContent; }
     void setRequestContent(const string& requestContent) { this->requestContent = requestContent; }
-    int getNumber() { return number; }
+    int getNumber() const { return number; }
     void setNumber(int number) { this->number = number; }
 
 private:
@@ -29,14 +30,14 @@ public:
             if (request.getRequestType() == string("请假") && request.getNumber() <= 2)
                 cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "天, 被批准" << endl;
             else
-                cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "天, 我无权处理" << endl; 
+                cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "元, 我无权处理" << endl; 
         }     
         else if (mangerLevel == string("总监"))
         {
             if (request.getRequestType() == string("请假") && request.getNumber() <= 5)
                 cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "天, 被批准" << endl;
             else
-                cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "天, 我无权处理" << endl; 
+                cout << name << ":" << request.getRequestContent() << " 数量:" << request.getNumber() << "元, 我无权处理" << endl; 
         }
         else if (mangerLevel == string("总经理"))
         {

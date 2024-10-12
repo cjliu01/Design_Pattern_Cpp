@@ -1,6 +1,7 @@
-#include<iostream>
-#include<vector>
-#include<string>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ public:
     void notifyEmployee();
     string getAction() { return action; }
     void setAction(const string& value) { this->action = value; }
+    virtual ~Subject() = default;
 private:
     vector<Observer *> observers;
     string action;
@@ -25,6 +27,7 @@ class Boss: public Subject
 {
 public:
     Boss(const string& name): Subject(name) {}
+    //using Subject::Subject;
 };
 
 
@@ -38,9 +41,10 @@ class Observer
 {
 public:
     Observer(const string& name, Subject& sub): name(name), sub(sub) {}
-    virtual void update() = 0;
     bool operator==(const Observer& rhs) { return (this->name == rhs.name) && (this->sub.name == rhs.sub.name); }
     bool operator!=(const Observer& rhs) { return !(*this == rhs); }
+    virtual void update() = 0;
+    virtual ~Observer() = default;
 protected:
     string name;
     Subject &sub;
@@ -53,14 +57,11 @@ void Subject::attach(Observer& observer)
 
 void Subject::detach(Observer& observer)
 {
-    for (auto iter = observers.begin(); iter != observers.end(); ++iter)
-    {
-        if (*(*iter) == observer)
-        {
-            observers.erase(iter);
-            break;
-        }
-    }
+    auto it = find(observers.begin(), observers.end(), &observer);
+    if (it != observers.end())
+        observers.erase(it);
+    else
+        cout << "未找到该观察者" << endl;
 }
 
 void Subject::notifyEmployee()
@@ -75,14 +76,14 @@ class StockObserver: public Observer
 {
 public:
     StockObserver(const string& name, Subject& sub): Observer(name, sub) {}
-    void update() { cout << sub.name << ":" << sub.getAction() << "! " << name << ",请关闭股票行情,赶紧工作。" << endl; }
+    void update() override { cout << sub.name << ":" << sub.getAction() << "! " << name << ",请关闭股票行情,赶紧工作。" << endl; }
 };
 
 class NBAObserver: public Observer
 {
 public:
     NBAObserver(const string& name, Subject& sub): Observer(name, sub) {}
-    void update() { cout << sub.name << ":" << sub.getAction() << "! " << name << ",请关闭NBA直播,赶紧工作。" << endl; }
+    void update() override { cout << sub.name << ":" << sub.getAction() << "! " << name << ",请关闭NBA直播,赶紧工作。" << endl; }
 };
 
 int main()

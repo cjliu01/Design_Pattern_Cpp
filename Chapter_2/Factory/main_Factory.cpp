@@ -1,5 +1,6 @@
-#include<iostream>
-#include<cmath>
+#include <iostream>
+#include <cmath>
+#include <memory>
 
 using namespace std;
 
@@ -7,19 +8,20 @@ class CashSuper
 {
 public:
     virtual double acceptCash(double price, int num) = 0;
+    virtual ~CashSuper() = default;
 };
 
 class CashNormal: public CashSuper
 {
 public:
-    double acceptCash(double price, int num) { return price * num; }
+    double acceptCash(double price, int num) override { return price * num; }
 };
 
 class CashRebate: public CashSuper
 {
 public:
     CashRebate(double MoneyRebate): moneyRebate(MoneyRebate) {}
-    double acceptCash(double price, int num) { return price * num * moneyRebate; }
+    double acceptCash(double price, int num) override { return price * num * moneyRebate; }
 
 private:
     double moneyRebate;
@@ -29,7 +31,7 @@ class CashReturn: public CashSuper
 {
 public:
     CashReturn(double moneyCondition, double moneyReturn): moneyCondition(moneyCondition), moneyReturn(moneyReturn) {}
-    double acceptCash(double price, int num) 
+    double acceptCash(double price, int num) override
     {
         double result = price * num;
         if (moneyCondition > 0 && result >= moneyCondition) 
@@ -45,9 +47,9 @@ private:
 class CashFactory
 {
 public:
-    static CashSuper* createCashAccept(int cashType)
+    static shared_ptr<CashSuper> createCashAccept(int cashType)
     {
-        CashSuper* cs = 0;
+        CashSuper* cs = nullptr;
         switch(cashType)
         {
             case 1: cs = new CashNormal(); break;
@@ -55,7 +57,7 @@ public:
             case 3: cs = new CashRebate(0.7); break;
             case 4: cs = new CashReturn(300, 100); break;
         }
-        return cs;
+        return shared_ptr<CashSuper>(cs);
     }
 };
 
@@ -76,11 +78,9 @@ int main()
         cin >> num;
         if (price > 0 && num > 0)
         {
-            CashSuper* cs = CashFactory::createCashAccept(discount);
+            shared_ptr<CashSuper> cs = CashFactory::createCashAccept(discount);
             totalPrice = cs->acceptCash(price, num);
             total += totalPrice;
-            delete cs;
-            cs = nullptr;
 
             cout << "单价: " << price << "元 数量: " << num 
                 << " 合计: " << totalPrice << "元" << endl;

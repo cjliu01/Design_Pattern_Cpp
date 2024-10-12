@@ -1,36 +1,38 @@
-#include<iostream>
-#include<string>
-#include<cmath>
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <memory>
 using namespace std;
 
 class Operation
 {
 public:
     virtual double getResult(double numberA, double numberB) = 0;
+    virtual ~Operation() = default;
 };
 
 class Add: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA + numberB; }
+    double getResult(double numberA, double numberB) override { return numberA + numberB; }
 };
 
 class Sub: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA - numberB; }
+    double getResult(double numberA, double numberB) override { return numberA - numberB; }
 };
 
 class Mul: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA * numberB; }
+    double getResult(double numberA, double numberB) override { return numberA * numberB; }
 };
 
 class Div: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) 
+    double getResult(double numberA, double numberB) override
     {
         if (numberB == 0)
         {
@@ -44,7 +46,7 @@ public:
 class Pow: public Operation
 {
 public:
-    double getResult(double numberA, double numberB)
+    double getResult(double numberA, double numberB) override
     {
         return pow(numberA, numberB);
     }
@@ -53,7 +55,7 @@ public:
 class Log: public Operation
 {
 public:
-    double getResult(double numberA, double numberB)
+    double getResult(double numberA, double numberB) override
     {
         if (numberA <= 0 || numberB <= 0)
         {
@@ -67,49 +69,49 @@ public:
 class Factory
 {
 public:
-    virtual Operation* createOperation(char operate) = 0;
+    virtual shared_ptr<Operation> createOperation(char operate) = 0;
+    virtual ~Factory() = default;
 };
 
 class BasicFactory: public Factory
 {
 public:
-    Operation* createOperation(char operate)
+    shared_ptr<Operation> createOperation(char operate)
     {
-        Operation* operation = 0;
+        Operation* oper = nullptr;
         switch(operate)
         {
-            case '+': operation = new Add(); break;
-            case '-': operation = new Sub(); break;
-            case '*': operation = new Mul(); break;
-            case '/': operation = new Div(); break;
+            case '+': oper = new Add(); break;
+            case '-': oper = new Sub(); break;
+            case '*': oper = new Mul(); break;
+            case '/': oper = new Div(); break;
         }
-        return operation;
+        return shared_ptr<Operation>(oper);
     }
-
 };
 
 class AdvancedFactory: public Factory
 {
 public:
-    Operation* createOperation(char operate)
+    shared_ptr<Operation> createOperation(char operate)
     {
-        Operation* oper = 0;
+        Operation* oper = nullptr;
         switch(operate)
         {
             case 'p': oper = new Pow(); break;
             case 'l': oper = new Log(); break;
         }
-        return oper;
+        return shared_ptr<Operation>(oper);
     }
 };
 
 class OperationFactory
 {
 public:
-    static Operation* createOperate(char operate)
+    static shared_ptr<Operation> createOperate(char operate)
     {
-        Operation *oper = 0;
-        Factory *factory = 0;
+        shared_ptr<Operation> oper;
+        Factory *factory = nullptr;
         switch(operate)
         {
             case '+':
@@ -137,13 +139,11 @@ int main()
     cin >> numberB;
     cout << "请输入操作符(+, -, *, /, p, l):";
     cin >> operation;
-    Operation *oper = OperationFactory::createOperate(operation);
-    if (oper != 0)
+    shared_ptr<Operation> oper = OperationFactory::createOperate(operation);
+    if (oper != nullptr)
     {
         double result = oper->getResult(numberA, numberB);
         cout << "计算结果=" << result;
-        delete oper;
-        oper = 0;
     }
     return 0;
 }

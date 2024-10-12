@@ -1,6 +1,8 @@
-#include<iostream>
-#include<string>
-#include<vector>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <memory>
 
 using namespace std;
 
@@ -12,6 +14,7 @@ public:
     virtual void visitConcreteElementA(ConcreteElementA& concreteElementA) = 0;
     virtual void visitConcreteElementB(ConcreteElementB& concreteElementB) = 0;
     virtual string getClassName() = 0;
+    virtual ~Visitor() = default;
 };
 
 class Element 
@@ -19,55 +22,52 @@ class Element
 public:
     virtual void accept(Visitor& visitor) = 0;
     virtual string getClassName() = 0;
+    virtual ~Element() = default;
 };
 
 class ConcreteElementA: public Element
 {
 public:
-    void accept(Visitor& visitor) { visitor.visitConcreteElementA(*this); }
-    string getClassName() { return string("ConcreteElementA"); }
+    void accept(Visitor& visitor) override { visitor.visitConcreteElementA(*this); }
+    string getClassName() override { return string("ConcreteElementA"); }
 };
 
 class ConcreteElementB: public Element
 {
 public:
-    void accept(Visitor& visitor) { visitor.visitConcreteElementB(*this); }
-    string getClassName() { return string("ConcreteElementB"); }
+    void accept(Visitor& visitor) override { visitor.visitConcreteElementB(*this); }
+    string getClassName() override { return string("ConcreteElementB"); }
 };
 
 class ConcreteVisitor1: public Visitor
 {
 public:
-    void visitConcreteElementA(ConcreteElementA& concreteElementA) { cout << concreteElementA.getClassName() << "被" << getClassName() << "访问" << endl; }
-    void visitConcreteElementB(ConcreteElementB& concreteElementB) { cout << concreteElementB.getClassName() << "被" << getClassName() << "访问" << endl; }
+    void visitConcreteElementA(ConcreteElementA& concreteElementA) override { cout << concreteElementA.getClassName() << "被" << getClassName() << "访问" << endl; }
+    void visitConcreteElementB(ConcreteElementB& concreteElementB) override { cout << concreteElementB.getClassName() << "被" << getClassName() << "访问" << endl; }
     
-    string getClassName() { return string("ConcreteVisitor1"); }
+    string getClassName() override { return string("ConcreteVisitor1"); }
 };
 
 class ConcreteVisitor2: public Visitor
 {
 public:
-    void visitConcreteElementA(ConcreteElementA& concreteElementA) { cout << concreteElementA.getClassName() << "被" << getClassName() << "访问" << endl; }
-    void visitConcreteElementB(ConcreteElementB& concreteElementB) { cout << concreteElementB.getClassName() << "被" << getClassName() << "访问" << endl; }
+    void visitConcreteElementA(ConcreteElementA& concreteElementA) override { cout << concreteElementA.getClassName() << "被" << getClassName() << "访问" << endl; }
+    void visitConcreteElementB(ConcreteElementB& concreteElementB) override { cout << concreteElementB.getClassName() << "被" << getClassName() << "访问" << endl; }
     
-    string getClassName() { return string("ConcreteVisitor2"); }
+    string getClassName() override { return string("ConcreteVisitor2"); }
 };
 
 class ObjectStructure
 {
 public:
-    void attach(Element* element) { elements.push_back(element); }
-    void detach(Element *element) 
+    void attach(shared_ptr<Element> element) { elements.push_back(element); }
+    void detach(shared_ptr<Element> element) 
     {
-        for (int i = 0; i < elements.size(); ++i)
-        {
-            if (elements[i] == element)
-            {
-                delete elements[i];
-                elements.erase(i + elements.begin());
-                break;
-            }
-        }
+        auto it = find(elements.begin(), elements.end(), element);
+        if (it != elements.end())
+            elements.erase(it);
+        else
+            cout << "not found" << endl;
     }
 
     void accept(Visitor& visitor)
@@ -76,21 +76,15 @@ public:
             elements[i]->accept(visitor);
     }
 
-     ~ObjectStructure()
-    {
-        for (int i = 0; i < elements.size(); ++i)
-            delete elements[i];
-    }
-
 private:
-    vector<Element *> elements;
+    vector<shared_ptr<Element>> elements;
 };
 
 int main()
 {
     ObjectStructure o;
-    o.attach(new ConcreteElementA);
-    o.attach(new ConcreteElementB);
+    o.attach(make_shared<ConcreteElementA>());
+    o.attach(make_shared<ConcreteElementB>());
 
     ConcreteVisitor1 v1;
     ConcreteVisitor2 v2;

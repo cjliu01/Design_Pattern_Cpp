@@ -1,5 +1,6 @@
-#include<iostream>
-#include<cmath>
+#include <iostream>
+#include <cmath>
+#include <memory>
 
 using namespace std;
 
@@ -7,19 +8,20 @@ class CashSuper
 {
 public:
     virtual double acceptCash(double price, int num) = 0;
+    virtual ~CashSuper() = default;
 };
 
 class CashNormal: public CashSuper
 {
 public:
-    double acceptCash(double price, int num) { return price * num; }
+    double acceptCash(double price, int num) override { return price * num; }
 };
 
 class CashRebate: public CashSuper
 {
 public:
     CashRebate(double MoneyRebate): moneyRebate(MoneyRebate) {}
-    double acceptCash(double price, int num) { return price * num * moneyRebate; }
+    double acceptCash(double price, int num) override { return price * num * moneyRebate; }
 
 private:
     double moneyRebate;
@@ -29,7 +31,7 @@ class CashReturn: public CashSuper
 {
 public:
     CashReturn(double moneyCondition, double moneyReturn): moneyCondition(moneyCondition), moneyReturn(moneyReturn) {}
-    double acceptCash(double price, int num) 
+    double acceptCash(double price, int num) override
     {
         double result = price * num;
         if (moneyCondition > 0 && result >= moneyCondition) 
@@ -49,18 +51,17 @@ public:
     {
         switch(cashType)
         {
-            case 1: cs = new CashNormal(); break;
-            case 2: cs = new CashRebate(0.8); break;
-            case 3: cs = new CashRebate(0.7); break;
-            case 4: cs = new CashReturn(300, 100); break; 
+            case 1: cs = make_shared<CashNormal>(); break;
+            case 2: cs = make_shared<CashRebate>(0.8); break;
+            case 3: cs = make_shared<CashRebate>(0.7); break;
+            case 4: cs = make_shared<CashReturn>(300, 100); break; 
         }
     }
-    ~CashContext() { delete cs; cs = 0;}
 
     double getResult(double price, int num) { return cs->acceptCash(price, num); }
 
 private:
-    CashSuper* cs;
+    shared_ptr<CashSuper> cs;
 };
 
 int main()

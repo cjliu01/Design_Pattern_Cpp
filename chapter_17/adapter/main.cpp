@@ -1,5 +1,6 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 using namespace std;
 
 class Player
@@ -8,6 +9,7 @@ public:
     Player(const string& name): name(name) {}
     virtual void attack() = 0;
     virtual void defence() = 0;
+    virtual ~Player() = default;
 protected:
     string name;
 };
@@ -16,24 +18,24 @@ class Forwards: public Player
 {
 public:
     Forwards(const string& name): Player(name) {}
-    void attack() { cout << "Ç°·æ " << name << " ½ø¹¥ " << endl; }
-    void defence() { cout << "Ç°·æ " << name << " ·ÀÊØ " << endl; }
+    void attack() override { cout << "Ç°·æ " << name << " ½ø¹¥ " << endl; }
+    void defence() override { cout << "Ç°·æ " << name << " ·ÀÊØ " << endl; }
 };
 
 class Center: public Player
 {
 public:
     Center(const string& name): Player(name) {}
-    void attack() { cout << "ÖÐ·æ " << name << " ½ø¹¥ " << endl; }
-    void defence() { cout << "ÖÐ·æ " << name << " ·ÀÊØ " << endl; }
+    void attack() override { cout << "ÖÐ·æ " << name << " ½ø¹¥ " << endl; }
+    void defence() override { cout << "ÖÐ·æ " << name << " ·ÀÊØ " << endl; }
 };
 
 class Guards: public Player
 {
 public:
     Guards(const string& name): Player(name) {}
-    void attack() { cout << "ºóÎÀ " << name << " ½ø¹¥ " << endl; }
-    void defence() { cout << "ºóÎÀ " << name << " ½ø¹¥ " << endl; }
+    void attack() override { cout << "ºóÎÀ " << name << " ½ø¹¥ " << endl; }
+    void defence() override { cout << "ºóÎÀ " << name << " ½ø¹¥ " << endl; }
 };
 
 class ForeignCenter
@@ -51,8 +53,8 @@ class Translator: public Player
 {
 public:
     Translator(const string& name): Player(name) { foreignCenter.setName(name); }
-    void attack() { foreignCenter.jingong(); }
-    void defence() { foreignCenter.fangshou(); }
+    void attack() override { foreignCenter.jingong(); }
+    void defence() override { foreignCenter.fangshou(); }
 
 private:
     ForeignCenter foreignCenter;
@@ -60,17 +62,14 @@ private:
 
 int main()
 {
-    Player* forwards = new Forwards(string("°ÍµÙ¶û"));
+    shared_ptr<Player> forwards = make_shared<Forwards>("°ÍµÙ¶û");
     forwards->attack();
-    Player* guards = new Guards(string("Âó¿Ë¸ñÀ×µÏ"));
+    shared_ptr<Player> guards = make_shared<Guards>("Âó¿Ë¸ñÀ×µÏ");
     guards->defence(); 
-    Player* center = new Translator(string("Ò¦Ã÷"));
+    shared_ptr<Player> center = make_shared<Translator>("Ò¦Ã÷");
 
     center->attack();
     center->defence();
 
-    delete forwards;
-    delete guards;
-    delete center;
     return 0;
 }

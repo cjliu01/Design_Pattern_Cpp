@@ -1,28 +1,30 @@
-#include<iostream>
-#include<string>
-#include<vector>
+#include <iostream>
+#include <string>
+#include <vector>
 using namespace std;
 
 class Change
 {
 public:
     virtual string changeThing(const string &thing) = 0;
+    virtual ~Change() = default;
 };
 
 class Animal
 {
 public:
-    Animal() { this->name = string("无名"); }
-    Animal(const string &name) { this->name = name; }
+    Animal(): name("无名") {}
+    Animal(const string &name): name(name) {} 
     void setShoutNum(int num) { this->shoutNum = num; }
     int getShoutNum() { return this->shoutNum; }
     string shout() 
     {
-        string result("");
+        string result;
         for (int i = 0; i < this->shoutNum; i++)
             result += getShoutSound();
         return "我的名字叫" + this->name + " " + result; 
     }
+    virtual ~Animal() = default;
 
 protected:
     string name;
@@ -38,7 +40,7 @@ public:
     Cat(const string &name): Animal(name) {}
     
 protected:
-    string getShoutSound() { return string("喵"); }
+    string getShoutSound() override { return string("喵"); }
 };
 
 class Dog: public Animal
@@ -47,7 +49,7 @@ public:
     Dog(): Animal() {}
     Dog(const string &name): Animal(name) {}
 protected:
-    string getShoutSound() { return string("汪"); } 
+    string getShoutSound() override { return string("汪"); } 
 };
 
 class Sheep: public Animal
@@ -56,7 +58,7 @@ public:
     Sheep(): Animal() {}
     Sheep(const string &name): Animal(name) {}
 protected:
-    string getShoutSound() { return string("咩"); } 
+    string getShoutSound() override { return string("咩"); } 
 };
 
 class Cattle: public Animal
@@ -65,7 +67,7 @@ public:
     Cattle(): Animal() {}
     Cattle(const string &name): Animal(name) {}
 protected:
-    string getShoutSound() { return string("哞"); } 
+    string getShoutSound() override { return string("哞"); } 
 };
 
 class Monkey: public Animal
@@ -74,7 +76,7 @@ public:
     Monkey(): Animal() {}
     Monkey(const string &name): Animal(name) {}
 protected:
-    string getShoutSound() { return string("呔"); } 
+    string getShoutSound() override { return string("呔"); } 
 };
 
 class MachineCat: public Cat, public Change
@@ -82,7 +84,7 @@ class MachineCat: public Cat, public Change
 public:
     MachineCat(): Cat(), Change() {}
     MachineCat(const string &name): Cat(name), Change() {}
-    string changeThing(const string& thing)
+    string changeThing(const string& thing) override
     {
         return shout() + string(", 我有万能的口袋, 我可变出") + thing;
     }
@@ -94,12 +96,12 @@ class StoneMonkey: public Monkey, public Change
 public:
     StoneMonkey(): Monkey(), Change() {}
     StoneMonkey(const string &name): Monkey(name), Change() {}
-    string changeThing(const string& thing)
+    string changeThing(const string& thing) override
     {
         return shout() + string(", 我有万能的口袋, 我可变出") + thing;
     }
 protected:
-    string getShoutSound() { return string("俺老孙来也"); } 
+    string getShoutSound() override { return string("俺老孙来也"); } 
 };
 
 int main()
@@ -111,16 +113,10 @@ int main()
     Cat cat2(string("咪咪"));
     MachineCat machineCat(string("叮铛"));
     StoneMonkey stoneMonkey(string("孙悟空"));
-    vector<Animal*> animals;
-    animals.push_back(&dog1);
-    animals.push_back(&cattle);
-    animals.push_back(&cat1);
-    animals.push_back(&cat2);
-    animals.push_back(&sheep);
-    animals.push_back(&stoneMonkey);
+    vector<Animal*> animals = { &dog1, &cattle, &cat1, &cat2, &sheep, &machineCat, &stoneMonkey };
 
     for (int i = 0; i < animals.size(); i++)
-        cout << (*animals[i]).shout() << endl;
+        cout << animals[i]->shout() << endl;
     cout << machineCat.changeThing(string("各种各样的东西! ")) << endl;
     cout << stoneMonkey.changeThing(string("金箍棒! "));
     return 0;

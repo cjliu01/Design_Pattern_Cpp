@@ -1,5 +1,6 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 
@@ -18,42 +19,43 @@ class Finery
 {
 public:
     virtual void show() = 0;
+    virtual ~Finery() = default;
 };
 
 class TShirt: public Finery
 {
 public:
-    void show() { cout << "TShirt "; }
+    void show() override { cout << "TShirt "; }
 };
 
 class BigTrouser: public Finery
 {
 public:
-    void show() { cout << "BigTrouser "; }
+    void show() override { cout << "BigTrouser "; }
 };
 
 class Sneakers: public Finery
 {
 public:
-    void show() { cout << "Sneakers "; }
+    void show() override { cout << "Sneakers "; }
 };
 
 class Suit: public Finery
 {
 public:
-    void show() { cout << "Suit "; }
+    void show() override { cout << "Suit "; }
 };
 
 class Tie: public Finery
 {
 public:
-    void show() { cout << "Tie "; }
+    void show() override { cout << "Tie "; }
 };
 
 class LeatherShoes: public Finery
 {
 public:
-    void show() { cout << "LeatherShoes "; }
+    void show() override { cout << "LeatherShoes "; }
 };
 
 int main()
@@ -61,32 +63,24 @@ int main()
     Person xc("小菜");
 
     cout << "第一种装扮: ";
-    Finery *dtx = new TShirt();
-    Finery *kk = new BigTrouser();
-    Finery *pqx = new Sneakers();
+    shared_ptr<Finery> dtx(new TShirt());
+    shared_ptr<Finery>  kk(new BigTrouser());
+    shared_ptr<Finery> pqx(new Sneakers());
 
     dtx->show();
     kk->show();
     pqx->show();
     xc.show();
 
-    delete dtx;
-    delete kk;
-    delete pqx;
-
     cout << "\n第二种装扮: ";
-    Finery *xz = new Suit();
-    Finery *ld = new Tie();
-    Finery *px = new LeatherShoes();
+    shared_ptr<Finery> xz(new Suit());
+    shared_ptr<Finery> ld(new Tie());
+    shared_ptr<Finery> px(new LeatherShoes());
 
     xz->show();
     ld->show();
     px->show();
     xc.show();
-
-    delete xz;
-    delete ld;
-    delete px;
 
     return 0;
 }

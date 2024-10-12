@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -23,6 +23,8 @@ public:
             "a.阿司匹林 b.牛黄解毒片 c.氟哌酸 d.让他们喝大量的生牛奶 e.以上全不对" << endl;
         cout << "答案: " << answer3() << endl;
     }
+    virtual ~TestPaper() = default;
+
 protected:
     virtual string answer1() = 0;
     virtual string answer2() = 0;
@@ -32,17 +34,17 @@ protected:
 class TestPaperA: public TestPaper
 {
 protected:
-    string answer1() { return string("b"); }
-    string answer2() { return string("a"); }
-    string answer3() { return string("c"); }
+    string answer1() override { return string("b"); }
+    string answer2() override { return string("a"); }
+    string answer3() override { return string("c"); }
 };
 
 class TestPaperB: public TestPaper
 {
 protected:
-    string answer1() { return string("d"); }
-    string answer2() { return string("b"); }
-    string answer3() { return string("a"); }
+    string answer1() override { return string("d"); }
+    string answer2() override { return string("b"); }
+    string answer3() override { return string("a"); }
 };
 
 int main()

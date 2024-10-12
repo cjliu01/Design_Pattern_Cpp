@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -14,19 +14,21 @@ public:
         cout << "建造" << person() << "人的左脚" << endl;
         cout << "建造" << person() << "人的右脚" << endl;
     }
+
+    virtual ~PersonBuilder() = default;
 protected:
     virtual string person() = 0;
 };
 class PersonThinBuilder: public PersonBuilder
 {
 protected: 
-    string person() { return string("瘦"); }
+    string person() override { return string("瘦"); }
 };
 
 class PersonFatBuilder: public PersonBuilder
 {
 protected: 
-    string person() { return string("胖"); }
+    string person() override { return string("胖"); }
 };
 
 int main()

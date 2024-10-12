@@ -1,5 +1,6 @@
-#include<iostream>
-#include<stdexcept>
+#include <iostream>
+#include <stdexcept>
+#include <memory>
 
 using namespace std;
 
@@ -7,30 +8,31 @@ class Operation
 {
 public:
     virtual double getResult(double numberA, double numberB) = 0;
+    virtual ~Operation() = default;
 };
 
 class Add: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA + numberB; }
+    double getResult(double numberA, double numberB) override { return numberA + numberB; }
 };
 
 class Sub: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA - numberB; }
+    double getResult(double numberA, double numberB) override { return numberA - numberB; }
 };
 
 class Mul: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) { return numberA * numberB; }
+    double getResult(double numberA, double numberB) override { return numberA * numberB; }
 };
 
 class Div: public Operation
 {
 public:
-    double getResult(double numberA, double numberB) 
+    double getResult(double numberA, double numberB) override
     {
         if (numberB == 0)
         {
@@ -44,9 +46,9 @@ public:
 class OperationFactory
 {
 public:
-    static Operation* createOperate(char operate)
+    static shared_ptr<Operation> createOperate(char operate)
     {   
-        Operation* oper = 0;
+        Operation *oper = nullptr;
         switch(operate)
         {
             case '+': oper = new Add(); break;
@@ -54,7 +56,7 @@ public:
             case '*': oper = new Mul(); break;
             case '/': oper = new Div(); break;
         }
-        return oper;
+        return shared_ptr<Operation>(oper);
     }
 };
 
@@ -68,13 +70,11 @@ int main()
     cin >> numberB;
     cout << "请输入操作符(+, -, *, /):";
     cin >> operation;
-    Operation *oper = OperationFactory::createOperate(operation);
-    if (oper != 0)
+    shared_ptr<Operation> oper = OperationFactory::createOperate(operation);
+    if (oper != nullptr)
     {
         double result = oper->getResult(numberA, numberB);
         cout << "计算结果=" << result;
-        delete oper;
-        oper = 0;
     }
     return 0;
 }

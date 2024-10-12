@@ -1,5 +1,5 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -9,6 +9,7 @@ public:
     virtual void giveDolls() = 0;
     virtual void giveFlowers() = 0;
     virtual void giveChocolate() = 0;
+    virtual ~GiveGift() = default;
 };
 
 class SchoolGril
@@ -25,9 +26,9 @@ class Pursuit: public GiveGift
 {
 public:
     Pursuit(const SchoolGril& mm): mm(mm) {}
-    void giveDolls() { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÑóÍÞÍÞ¡£" << endl; }
-    void giveFlowers() { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÏÊ»¨¡£" << endl; }
-    void giveChocolate() { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÇÉ¿ËÁ¦¡£" << endl; }
+    void giveDolls() override { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÑóÍÞÍÞ¡£" << endl; }
+    void giveFlowers() override { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÏÊ»¨¡£" << endl; }
+    void giveChocolate() override { cout << mm.getName() << ",ÄãºÃ£¡ËÍÄãÇÉ¿ËÁ¦¡£" << endl; }
 private:
     SchoolGril mm;
 };
@@ -36,9 +37,9 @@ class Proxy: public GiveGift
 {
 public:
     Proxy(const SchoolGril& mm): pursuit(mm) {}
-    void giveDolls() { pursuit.giveDolls(); }
-    void giveFlowers() { pursuit.giveFlowers(); }
-    void giveChocolate() { pursuit.giveChocolate(); }
+    void giveDolls() override { pursuit.giveDolls(); }
+    void giveFlowers() override { pursuit.giveFlowers(); }
+    void giveChocolate() override { pursuit.giveChocolate(); }
 
 private:
     Pursuit pursuit;
@@ -46,7 +47,7 @@ private:
 
 int main()
 {
-    SchoolGril grilLjj(string("Àî½¿½¿"));
+    SchoolGril grilLjj("Àî½¿½¿");
 
     Proxy boyDl(grilLjj);
     boyDl.giveDolls();

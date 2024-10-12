@@ -1,5 +1,6 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 
@@ -36,6 +37,7 @@ class IUser
 public:
     virtual void insert(User& user) = 0;
     virtual User getUser(int id) = 0;
+    virtual ~IUser() = default;
 };
 
 class SqlserverUser: public IUser
@@ -64,7 +66,8 @@ class IDepartment
 {
 public:
     virtual void insert(Department& department) = 0;
-    virtual Department getDepartment(int id) = 0;   
+    virtual Department getDepartment(int id) = 0;  
+    virtual ~IDepartment() = default; 
 };
 
 class SqlserverDepartment: public IDepartment
@@ -93,34 +96,27 @@ public:
 class DataAccess
 {
 public:
-    static string db;
-    DataAccess(): user(0), department(0) {}
-    ~DataAccess() 
+    shared_ptr<IUser> createUser()
     {
-        delete user;
-        delete department;
-    }
-
-    IUser* createUser()
-    {
-        if (db == string("Sqlserver"))
-            user = new SqlserverUser();
-        else if (db == string("Access"))
-            user = new AccessUser();
+        if (db == "Sqlserver")
+            user = make_shared<SqlserverUser>();
+        else if (db == "Access")
+            user = make_shared<AccessUser>();
         return user;
     }
 
-    IDepartment* createDepartment()
+    shared_ptr<IDepartment> createDepartment()
     {
-        if (db == string("Sqlserver"))
-            department = new SqlserverDepartment();
-        else if (db == string("Access"))
-            department = new AccessDepartment();
+        if (db == "Sqlserver")
+            department = make_shared<SqlserverDepartment>();
+        else if (db == "Access")
+            department = make_shared<AccessDepartment>();
         return department;
     }
 private:
-    IUser* user;
-    IDepartment* department;
+    shared_ptr<IUser> user;
+    shared_ptr<IDepartment> department;
+    static string db;
 };
 string DataAccess::db("Access");
 
@@ -130,11 +126,11 @@ int main()
     Department department;
     
     DataAccess da;
-    IUser* iu = da.createUser();
+    shared_ptr<IUser> iu = da.createUser();
     
     iu->insert(user);
     iu->getUser(1);
-    IDepartment* idept = da.createDepartment();
+    shared_ptr<IDepartment> idept = da.createDepartment();
 
     idept->insert(department);
     idept->getDepartment(2);

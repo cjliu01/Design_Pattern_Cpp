@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -6,6 +7,7 @@ class Target
 {
 public:
     virtual void request() { cout << "ÆÕÍ¨ÇëÇó!" << endl; }
+    virtual ~Target() = default;
 };
 
 class Adaptee
@@ -17,16 +19,15 @@ public:
 class Adapter: public Target
 {
 public:
-    virtual void request() { adaptee.specificRequest(); }
+    virtual void request() override { adaptee.specificRequest(); }
 private:
     Adaptee adaptee;
 };
 
 int main()
 {
-    Target* target = new Adapter;
+    shared_ptr<Target> target = make_shared<Adapter>();
     target->request();
-    delete target;
 
     return 0;
 }

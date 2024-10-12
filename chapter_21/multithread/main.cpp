@@ -1,7 +1,7 @@
-#include<iostream>
-#include<thread>
-#include<mutex>
-#include<memory>
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <memory>
 
 using namespace std;
 
@@ -11,9 +11,11 @@ private:
     static unique_ptr<Singleton> instance;
     static mutex mtx;
 
-    Singleton() {}
+    Singleton() = default;
     Singleton(const Singleton&) = delete;
-    Singleton& opetator(const Singleton&) = delete;
+    Singleton(Singleton &&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+    Singleton& operator=(Singleton &&) = delete;
 
 public:
     static Singleton* getInstance()
@@ -24,7 +26,7 @@ public:
         return instance.get();
     }   
 };
-unique_ptr<Singleton> Singleton::instance = nullptr;
+unique_ptr<Singleton> Singleton::instance;
 mutex Singleton::mtx;
 
 void testSingleton(int id)

@@ -1,6 +1,7 @@
-#include<iostream>
-#include<string>
-#include<vector>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ public:
     void notifyObserver();
     void SetSubjectState(const string& state) { subjectState = state; }
     string GetSubjectState() { return subjectState; }
-
+    virtual ~Subject() = default;
 protected:
     string subjectState;
 private:
@@ -28,7 +29,7 @@ public:
     virtual void update() = 0;
     bool operator==(const Observer& rhs) { return this->name == rhs.name;}
     bool operator!=(const Observer& rhs) { return !(*this == rhs); } 
-
+    virtual ~Observer() = default;
 protected:
     string name;
     Subject &subject;
@@ -36,15 +37,12 @@ protected:
 
 void Subject::detach(const Observer& observer)
 {
-    for (auto iter = observers.begin(); iter != observers.end(); ++iter)
-    {
-        if (*(*iter) == observer)
-        {
-            observers.erase(iter);
-            break;
-        }
-    }
-}
+    auto it = find(observers.begin(), observers.end(), &observer);
+    if (it != observers.end())
+        observers.erase(it);
+    else
+        cout << "未找到该观察者" << endl;
+}   
 
 void Subject::attach(Observer& observer)
 {
@@ -62,7 +60,7 @@ class ConcreteObserver: public Observer
 {
 public:
     ConcreteObserver(const string& name, Subject& subject): Observer(name, subject) {}
-    void update() { cout << "观察者" << name << "的新状态是" << subject.GetSubjectState() << endl; }
+    void update() override { cout << "观察者" << name << "的新状态是" << subject.GetSubjectState() << endl; }
 };
 
 int main()

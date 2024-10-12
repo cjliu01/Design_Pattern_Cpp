@@ -1,26 +1,26 @@
-#include<iostream>
-#include<string>
-#include<vector>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
 using namespace std;
 
 class Handler
 {
 public:
-    void setSuccessor(Handler* successor) { this->successor = successor; }
-    virtual string getClassName() = 0;
+    void setSuccessor(shared_ptr<Handler> s) { successor = s; }
+    virtual string getClassName() const = 0;
     virtual void handleRequest(int request) = 0;
-    Handler(): successor(nullptr) {}
+    virtual ~Handler() = default;
 protected:
-    Handler* successor;
+    shared_ptr<Handler> successor;
 };
 
 class ConcreteHandler1: public Handler
 {
 public:
-    ConcreteHandler1(): Handler() {} 
-    string getClassName() { return string("ConcreteHandler1"); }
-    void handleRequest(int request)
+    string getClassName() const override { return string("ConcreteHandler1"); }
+    void handleRequest(int request) override
     {
         if (request >= 0 && request < 10)
             cout << getClassName() << "处理请求 " << request << endl;
@@ -32,9 +32,8 @@ public:
 class ConcreteHandler2: public Handler
 {
 public:
-    ConcreteHandler2(): Handler() {} 
-    string getClassName() { return string("ConcreteHandler2"); }
-    void handleRequest(int request)
+    string getClassName() const override { return string("ConcreteHandler2"); }
+    void handleRequest(int request) override
     {
         if (request >= 10 && request < 20)
             cout << getClassName() << "处理请求 " << request << endl;
@@ -46,8 +45,8 @@ public:
 class ConcreteHandler3: public Handler
 {
 public:
-    string getClassName() { return string("ConcreteHandler3"); }
-    void handleRequest(int request)
+    string getClassName() const override{ return string("ConcreteHandler3"); }
+    void handleRequest(int request) override
     {
         if (request >= 20 && request < 30)
             cout << getClassName() << "处理请求 " << request << endl;
@@ -58,9 +57,9 @@ public:
 
 int main()
 {
-    Handler* h1 = new ConcreteHandler1;
-    Handler* h2 = new ConcreteHandler2;
-    Handler* h3 = new ConcreteHandler3;
+    shared_ptr<Handler> h1 = make_shared<ConcreteHandler1>();
+    shared_ptr<Handler> h2 = make_shared<ConcreteHandler2>();
+    shared_ptr<Handler> h3 = make_shared<ConcreteHandler3>();
 
     h1->setSuccessor(h2);
     h2->setSuccessor(h3);
@@ -69,8 +68,6 @@ int main()
     for (int i = 0; i < requests.size(); ++i)
         h1->handleRequest(requests[i]);
 
-    delete h1;
-    delete h2;
-    delete h3;   
+
     return 0;
 }

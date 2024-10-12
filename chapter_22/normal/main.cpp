@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -6,6 +7,7 @@ class HandsetBrand
 {
 public:
     virtual void run() = 0;  
+    virtual ~HandsetBrand() = default;
 };
 
 class HandsetBrandN: public HandsetBrand {};
@@ -15,42 +17,40 @@ class HandsetBrandM: public HandsetBrand {};
 class HansetBrandMGame: public HandsetBrandM
 {
 public:
-    void run() { cout << "运行M品牌手机游戏" << endl; }
+    void run() override { cout << "运行M品牌手机游戏" << endl; }
 };
 
 class HandsetBrandNGame: public HandsetBrandN
 {
 public:
-    void run() { cout << "运行N品牌手机游戏" << endl; }
+    void run() override { cout << "运行N品牌手机游戏" << endl; }
 };
 
 class HandsetBrandMAddressList: public HandsetBrandM
 {
 public:
-    void run() { cout << "运行M品牌手机通讯录" << endl; }
+    void run() override { cout << "运行M品牌手机通讯录" << endl; }
 };
 
 class HandsetBrandNAddressList: public HandsetBrandN
 {
 public:
-    void run() { cout << "运行N品牌手机通讯录" << endl; }
+    void run() override { cout << "运行N品牌手机通讯录" << endl; }
 };
 
 int main()
 {
-    HandsetBrand *db = nullptr;
-    db = new HandsetBrandMAddressList();
+    shared_ptr<HandsetBrand> db = make_shared<HandsetBrandMAddressList>();
     db->run();
 
-    db = new HansetBrandMGame();
+    db.reset(new HansetBrandMGame());
     db->run();
 
-    db = new HandsetBrandNAddressList();
+    db.reset(new HandsetBrandNAddressList());
     db->run();
 
-    db = new HandsetBrandNGame();
+    db.reset(new HandsetBrandNGame());
     db->run();
 
-    delete db;
     return 0;
 }

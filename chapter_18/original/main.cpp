@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -54,5 +54,7 @@ int main()
     role.setVitality(backup.getVitality());
     role.setAttack(backup.getAttack());
     role.setDefense(backup.getDefense());
+
+    role.displayState();
     return 0;
 }

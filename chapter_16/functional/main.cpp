@@ -1,6 +1,7 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
+
 int hour = 0;
 bool workFinished = false;
 

@@ -7,13 +7,14 @@ class Character
 {
 public:
     virtual void show() = 0; 
+    virtual ~Character() = default;
 };
 
 class Person: public Character
 {
 public:
     Person(const string& name): name(name) {}
-    void show() { cout << "装扮的" + name; }
+    void show() override { cout << "装扮的" + name; }
 
 private: 
     string name;
@@ -22,11 +23,11 @@ private:
 class Finery: public Character
 {
 public:
-    Finery(): component(0) {}
+    Finery(): component(nullptr) {}
     void decorate(Character* component) { this->component = component; }
-    void show()
+    void show() override
     {
-        if(this->component != 0)
+        if(this->component != nullptr)
             this->component->show();
     }
 protected:
@@ -36,7 +37,7 @@ protected:
 class Tshirts: public Finery
 {
 public:
-    void show() 
+    void show() override 
     { 
         cout << "Tshirts"; 
         Finery::show();
@@ -46,7 +47,7 @@ public:
 class BigTrouser: public Finery
 {
 public:
-    void show()
+    void show() override
     {
         cout << "BigTrouser";
         Finery::show();
@@ -56,7 +57,7 @@ public:
 class Sneakers: public Finery
 {
 public:
-    void show()
+    void show() override
     {
         cout << "Sneakers";
         Finery::show();
@@ -66,7 +67,7 @@ public:
 class LeatherShoes: public Finery
 {
 public:
-    void show()
+    void show() override
     {        
         cout << "LeatherShoes";
         Finery::show();
@@ -76,7 +77,7 @@ public:
 class Tie: public Finery
 {
 public:
-    void show() 
+    void show() override
     {
         cout << "Tie";
         Finery::show();
@@ -86,7 +87,7 @@ public:
 class Suit: public Finery
 {
 public:
-    void show()
+    void show() override
     {
         cout << "Suit";
         Finery::show();
@@ -96,7 +97,7 @@ public:
 class Strawhat: public Finery
 {
 public:
-    void show()
+    void show() override
     {
         cout << "Strawhat";
         Finery::show();

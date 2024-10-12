@@ -1,20 +1,20 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
 class Singleton
 {
 private:
-    static Singleton* instance;
+    static unique_ptr<Singleton> instance;
     Singleton() {}
 public:
     static Singleton* getInstance()
     {
-        return instance;
+        return instance.get();
     }
-    ~Singleton() { delete instance; }
 };
-Singleton* Singleton::instance = new Singleton;
+unique_ptr<Singleton> Singleton::instance(new Singleton);
 
 int main()
 {

@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -7,65 +8,60 @@ class State
 {
 public:
     virtual void writeProgram(Work& w) = 0;
+    virtual ~State() = default;
 };
 
 
 class ForenonState: public State
 {
 public:
-    void writeProgram(Work& w);
+    void writeProgram(Work& w) override;
 };
 
 class NoonState: public State
 {
 public:
-    void writeProgram(Work& w);  
+    void writeProgram(Work& w) override;  
 };
 
 class AfternoonState: public State
 {
 public:
-    void writeProgram(Work& w);
+    void writeProgram(Work& w) override;
 };
 
 class EveningState: public State
 {
 public:
-    void writeProgram(Work& w);
+    void writeProgram(Work& w) override;
 };
 
 class SleepingState: public State
 {
 public:
-    void writeProgram(Work& w);
+    void writeProgram(Work& w) override;
 };
 
 class RestState: public State
 {
 public:
-    void writeProgram(Work& w);
+    void writeProgram(Work& w) override;
 };
 
 class Work
 {
 public:
     Work(): current(new ForenonState) {}
-    void setState(State* s) 
-    {
-        delete current;
-        current = nullptr;
-        current = s;
-    }
+    void setState(State* s) { current.reset(s); }
     void writeProgram() { current->writeProgram(*this); }
     int getHour() { return hour; }
     void setHour(int value) { hour = value; }
     bool getWorkFinished() { return workFinished; }
     void setWorkFinished(bool value) { workFinished = value; }
-    ~Work() { delete current; }
 private:
     int hour;
     bool workFinished = false;
-    State* current;
+    shared_ptr<State> current;
 };
 
 

@@ -1,6 +1,6 @@
-#include<iostream>
-#include<vector>
-#include<string>
+#include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 class Product
@@ -12,10 +12,8 @@ public:
     void add(const string& part) { parts.push_back(part); }
     void show()
     {
-        for (int i = 0; i < parts.size(); i++)
-        {
-            cout << parts[i] << endl;
-        }
+        for (auto& part: parts)
+            cout << part << endl;
     }
 
 };
@@ -26,14 +24,15 @@ public:
     virtual void buildPartA() = 0;
     virtual void buildPartB() = 0;
     virtual Product getResult() = 0;
+    virtual ~Builder() = default;
 };
 
 class concreteBuilder1: public Builder
 {
 public:
-    void buildPartA() { product.add(string("Part A")); }
-    void buildPartB() { product.add(string("Part B")); }
-    Product getResult() { return product; }
+    void buildPartA() override { product.add(string("Part A")); }
+    void buildPartB() override { product.add(string("Part B")); }
+    Product getResult() override { return product; }
 private:
     Product product;
 };
@@ -41,9 +40,9 @@ private:
 class concreteBuilder2: public Builder
 {
 public:
-    void buildPartA() { product.add(string("Part X")); }
-    void buildPartB() { product.add(string("Part Y")); }
-    Product getResult() { return product; }
+    void buildPartA() override { product.add(string("Part X")); }
+    void buildPartB() override { product.add(string("Part Y")); }
+    Product getResult() override { return product; }
 private:
     Product product;
 };

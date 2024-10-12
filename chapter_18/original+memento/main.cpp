@@ -1,5 +1,5 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -57,6 +57,7 @@ public:
         setAttack(memento.getAttack());
         setDefense(memento.getDefense());
     }
+    
 private:
     int vitality;
     int attack;

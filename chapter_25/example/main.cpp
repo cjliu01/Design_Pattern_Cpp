@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -8,6 +8,7 @@ class Country
 public:
     Country(UnitedNations* unitedNations=nullptr): unitedNations(unitedNations) {}
     virtual string getClassName() = 0;
+    virtual ~Country() = default;
 protected:
     UnitedNations* unitedNations;
 };
@@ -16,6 +17,7 @@ class UnitedNations
 {
 public:
     virtual void declare(const string& message, Country& country) = 0;
+    virtual ~UnitedNations() = default;
 };
 
 class USA: public Country
@@ -26,7 +28,7 @@ public:
     void declare(const string& message) { unitedNations->declare(message, *this);}
     void getMessage(const string& message) { cout << "美国获得对方信息" << message << endl; }
 
-    string getClassName() { return string("USA"); }
+    string getClassName() override { return string("USA"); }
 };
 
 class Iraq: public Country
@@ -37,7 +39,7 @@ public:
     void declare(const string& message) { unitedNations->declare(message, *this); }
     void getMessage(const string& message) { cout << "伊拉克获得对方信息" << message << endl; }
 
-    string getClassName() { return string("Iraq"); }
+    string getClassName() override { return string("Iraq"); }
 };
 
 class UnitedNationsSecurityCouncil: public UnitedNations
@@ -47,7 +49,7 @@ public:
     void setUSA(USA& value) { countryUSA = value; }
     void setIraq(Iraq& value) { countryIraq = value; }
 
-    void declare(const string& message, Country& country)
+    void declare(const string& message, Country& country) override
     {
         if (country.getClassName() == countryUSA.getClassName())
             countryIraq.getMessage(message);

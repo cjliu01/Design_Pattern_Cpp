@@ -1,7 +1,8 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 
 using namespace std;
+
 class WebSite
 {
 public:

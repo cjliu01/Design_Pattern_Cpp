@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -6,45 +7,41 @@ class HandsetSoft
 {
 public:
     virtual void run() = 0;
+    virtual ~HandsetSoft() = default;
 };
 
 class HandsetGame: public HandsetSoft
 {
 public:
-    void run() { cout << "手机游戏" << endl; }
+    void run() override { cout << "手机游戏" << endl; }
 };
 
 class HandsetAddressList: public HandsetSoft
 {
 public:
-    void run() { cout << "手机通信录" << endl; }
+    void run() override { cout << "手机通信录" << endl; }
 };
 
 class HandsetMusicPlay: public HandsetSoft
 {
 public:
-    void run() { cout << "音乐播放" << endl; }
+    void run() override { cout << "音乐播放" << endl; }
 };
 
 class HandsetBrand
 {
 public:
-    void setHandsetSoft(HandsetSoft *soft) 
-    {
-        delete this->soft;
-        this->soft = soft; 
-    }
-    ~HandsetBrand() { delete soft; }
-    HandsetBrand(HandsetSoft *soft=nullptr): soft(soft) {} 
+    void setHandsetSoft(HandsetSoft *s) { soft.reset(s); }
     virtual void run() = 0;
+    virtual ~HandsetBrand() = default;
 protected:
-    HandsetSoft *soft;
+    shared_ptr<HandsetSoft> soft;
 };
 
 class HandsetBrandM: public HandsetBrand
 {
 public:
-    void run() 
+    void run() override
     {
         cout << "品牌M" << endl;
         soft->run();
@@ -54,7 +51,7 @@ public:
 class HandsetBrandN: public HandsetBrand
 {
 public:
-    void run()
+    void run() override
     {
         cout << "品牌N" << endl;
         soft->run();
@@ -64,7 +61,7 @@ public:
 class HandsetBrandS: public HandsetBrand
 {
 public:
-    void run()
+    void run() override
     {
         cout << "品牌S" << endl;
         soft->run();
@@ -73,8 +70,7 @@ public:
 
 int main()
 {
-    HandsetBrand *db = nullptr;
-    db = new HandsetBrandN();
+    shared_ptr<HandsetBrand> db = make_shared<HandsetBrandN>();
     
     db->setHandsetSoft(new HandsetGame);
     db->run();
@@ -82,6 +78,5 @@ int main()
     db->setHandsetSoft(new HandsetAddressList);
     db->run();
 
-    delete db;
     return 0;
 }

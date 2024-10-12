@@ -1,6 +1,5 @@
-#include<iostream>
-#include<string>
-#include<typeinfo>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -9,6 +8,7 @@ class Mediator
 {
 public:
     virtual void send(const string& message, Colleague& colleague) = 0;
+    virtual ~Mediator() = default;
 };
 
 class Colleague
@@ -16,6 +16,7 @@ class Colleague
 public:
     Colleague(Mediator* mediator=nullptr): mediator(mediator) {}
     virtual string getClassName() = 0;
+    virtual ~Colleague() = default;
 protected:
     Mediator* mediator;
 };
@@ -26,7 +27,7 @@ public:
     ConcreteColleague1(Mediator* mediator): Colleague(mediator) {}
     void send(const string& message) { mediator->send(message, *this); }
     void notify(const string& message) { cout << "同事1得到信息: " << message << endl; }
-    string getClassName() { return string("ConcreteColleague1"); }
+    string getClassName() override { return string("ConcreteColleague1"); }
 
 };
 
@@ -36,8 +37,7 @@ public:
     ConcreteColleague2(Mediator* mediator): Colleague(mediator) {}
     void send(const string& message) { mediator->send(message, *this); }
     void notify(const string& message) { cout << "同事2得到信息: " << message << endl; }
-    string getClassName() { return string("ConcreteColleague2"); }
-
+    string getClassName() override { return string("ConcreteColleague2"); }
 
 };
 
@@ -47,7 +47,7 @@ public:
     ConcreteMediator(): colleague1(nullptr), colleague2(nullptr) {} 
     void setColleague1(ConcreteColleague1& value) { colleague1 = value; }
     void setColleague2(ConcreteColleague2& value) { colleague2 = value; }
-    void send(const string& message, Colleague& colleague)
+    void send(const string& message, Colleague& colleague) override
     {
         if (colleague.getClassName() == colleague1.getClassName())
             colleague2.notify(message);

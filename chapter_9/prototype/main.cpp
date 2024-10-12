@@ -1,18 +1,20 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 
 class Prototype
 {
 public:
-    virtual Prototype* clone() = 0;
+    virtual shared_ptr<Prototype> clone() = 0;
+    virtual ~Prototype() = default;
 };
 
 class WorkExperience
 {
 public:
-    string getTimeArea() { return timeArea;}
+    string getTimeArea() { return timeArea; }
     string getCompany() { return company; }
     void setTimeArea(const string& value) { this->timeArea = value; }
     void setCompany(const string& value) { this->company = value; }
@@ -41,9 +43,9 @@ public:
         cout << name << " " << sex << " " << age << endl;
         cout << "工作经历" << work.getTimeArea() << " " << work.getCompany() << endl;
     }
-    Prototype* clone() 
+    shared_ptr<Prototype> clone() override 
     {
-        return new Resume(*this);
+        return make_shared<Resume>(*this);
     }
 private:
     string name;
@@ -58,16 +60,14 @@ int main()
     resume1.setPersonalInfo(string("男"), string("29"));
     resume1.setWorkExperience(string("1998-2000"), string("XX公司"));
 
-    Resume *resume2 = static_cast<Resume* >(resume1.clone());
+    shared_ptr<Resume> resume2 = dynamic_pointer_cast<Resume>(resume1.clone());
     resume2->setWorkExperience(string("1998-2006"), string("YY公司"));
     
-    Resume *resume3 = static_cast<Resume* >(resume1.clone());
+    shared_ptr<Resume> resume3 = dynamic_pointer_cast<Resume>(resume1.clone());
     resume3->setPersonalInfo(string("男"), string("24"));
     
     resume1.display();
     resume2->display();
     resume3->display();
-    delete resume2;
-    delete resume3;
     return 0;
 }

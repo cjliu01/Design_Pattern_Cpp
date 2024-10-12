@@ -1,6 +1,7 @@
-#include<iostream>
-#include<string>
-#include<map>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <map>
 
 using namespace std;
 
@@ -8,18 +9,19 @@ class FlyWeight
 {
 public:
     virtual void operation(int extrinsicstate) = 0;
+    virtual ~FlyWeight() = default;
 };
 
 class ConcreteFlyWeight: public FlyWeight
 {
 public:
-    void operation(int extrinsicstate) { cout << "具体FlyWeight: " << extrinsicstate << endl; }
+    void operation(int extrinsicstate) override { cout << "具体FlyWeight: " << extrinsicstate << endl; }
 };
 
 class UnsharedConcreteFlyWeight: public FlyWeight
 {
 public:
-    void operation(int extrinsicstate) { cout << "不共享的具体FlyWeight" << extrinsicstate << endl; }
+    void operation(int extrinsicstate) override { cout << "不共享的具体FlyWeight" << extrinsicstate << endl; }
 };
 
 class FlyWeightFactory
@@ -27,34 +29,32 @@ class FlyWeightFactory
 public:
     FlyWeightFactory() 
     {
-        flyweights['X'] = new ConcreteFlyWeight();
-        flyweights['Y'] = new ConcreteFlyWeight();
-        flyweights['Z'] = new ConcreteFlyWeight();
+        flyweights['X'] = make_shared<ConcreteFlyWeight>();
+        flyweights['Y'] = make_shared<ConcreteFlyWeight>();
+        flyweights['Z'] = make_shared<ConcreteFlyWeight>();
     }
-    FlyWeight* getFlyWeight(char key) { return flyweights[key]; }
-    ~FlyWeightFactory() 
-    {
-        for (map<char, FlyWeight*>::iterator it = flyweights.begin(); it != flyweights.end(); ++it)
-            delete it->second;
-    }
+
+    shared_ptr<FlyWeight> getFlyWeight(char key) { return flyweights[key]; }
+
 private:
-    map<char, FlyWeight*> flyweights;
+    map<char, shared_ptr<FlyWeight>> flyweights;
 };
 
 int main()
 {
     int extrinsicstate = 22;
     FlyWeightFactory f;
-    FlyWeight* fx = f.getFlyWeight('X');
+    shared_ptr<FlyWeight> fx = f.getFlyWeight('X');
     fx->operation(--extrinsicstate);
 
-    FlyWeight* fy = f.getFlyWeight('Y');
+    shared_ptr<FlyWeight> fy = f.getFlyWeight('Y');
     fy->operation(--extrinsicstate);
 
-    FlyWeight* fz = f.getFlyWeight('Z');
+    shared_ptr<FlyWeight> fz = f.getFlyWeight('Z');
     fz->operation(--extrinsicstate);
 
-    FlyWeight* uf = new UnsharedConcreteFlyWeight();    
+    shared_ptr<FlyWeight> uf = make_shared<UnsharedConcreteFlyWeight>();    
     uf->operation(--extrinsicstate);
-    delete uf;
+   
+    return 0;
 }

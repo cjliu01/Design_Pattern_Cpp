@@ -1,40 +1,42 @@
-#include<iostream>
-#include<string>
-#include<cmath>
+#include <iostream>
+#include <string>
+#include <memory>
+#include <cmath>
 
 using namespace std;
 class Sale
 {
 public:
     virtual double acceptCash(double price, int num) = 0;
+    virtual ~Sale() = default;
 };
 
 class CashSuper: public Sale
 {
 public:
-    void decorate(Sale *component) { this->component = component; }
-    double acceptCash(double price, int num) 
+    void decorate(Sale *c) { component.reset(c); }
+    double acceptCash(double price, int num) override
     {
         double result = 0;
-        if (this->component != 0)
+        if (this->component != nullptr)
             result = this->component->acceptCash(price, num);
         return result;
     }
 protected:
-    Sale *component = 0;
+    shared_ptr<Sale> component;
 };  
 
 class CashNormal: public Sale
 {
 public:
-    double acceptCash(double price, int num) { return price * num;}
+    double acceptCash(double price, int num) override { return price * num;}
 };
 
 class CashRebate: public CashSuper
 {
 public: 
     CashRebate(double moneyRebate): moneyRebate(moneyRebate) {}
-    double acceptCash(double price, int num)
+    double acceptCash(double price, int num) override
     {
         double result = price * num * moneyRebate;
         return CashSuper::acceptCash(result, 1);
@@ -47,7 +49,7 @@ class CashReturn: public CashSuper
 {
 public:
     CashReturn(double moneyCondition, double moneyReturn): moneyCondition(moneyCondition), moneyReturn(moneyReturn) {}
-    double acceptCash(double price, int num)
+    double acceptCash(double price, int num) override
     {
         double result = price * num;
         if (moneyCondition > 0 && result >= moneyCondition)
@@ -62,11 +64,13 @@ private:
 class Factory
 {
 public:
-    virtual Sale* createSalesMode() = 0;
-    // 为了内存管理
-    Sale* cn = 0;
-    CashSuper* cr1 = 0;
-    CashSuper* cr2 = 0;
+    virtual shared_ptr<Sale> createSalesMode() = 0;
+    virtual ~Factory() = default;
+
+protected:
+    shared_ptr<Sale> cn;
+    CashSuper* cr1 = nullptr;
+    CashSuper* cr2 = nullptr;
 };
 
 class CashRebateReturnFactory: public Factory
@@ -74,15 +78,15 @@ class CashRebateReturnFactory: public Factory
 public:
     CashRebateReturnFactory(double moneyRebate, double moneyCondition, double moneyReturn): 
         moneyRebate(moneyRebate), moneyCondition(moneyCondition), moneyReturn(moneyReturn) {}
-    Sale* createSalesMode()
+    shared_ptr<Sale> createSalesMode() override
     {
-        cn = new CashNormal();
         cr1 = new CashReturn(moneyCondition, moneyReturn);
         cr2 = new CashRebate(moneyRebate);
 
-        cr1->decorate(cn);
+        cr1->decorate(new CashNormal);
         cr2->decorate(cr1);
-        return cr2;
+        cn.reset(cr2);
+        return cn;
     }
 
 private:
@@ -97,15 +101,15 @@ public:
     CashReturnRebateFactory(double moneyRebate, double moneyCondition, double moneyReturn):
         moneyCondition(moneyCondition), moneyReturn(moneyReturn), moneyRebate(moneyRebate) {}
     
-    Sale* createSalesMode()
+    shared_ptr<Sale> createSalesMode() override
     {
-        cn = new CashNormal();
         cr1 = new CashRebate(moneyRebate);
         cr2 = new CashReturn(moneyCondition, moneyReturn);
         
-        cr1->decorate(cn);
+        cr1->decorate(new CashNormal);
         cr2->decorate(cr1);
-        return cr2;
+        cn.reset(cr2);
+        return cn;
     }
 
 private:
@@ -122,36 +126,26 @@ public:
         switch(CashType)
         {
             case 1:
-            fs = new CashRebateReturnFactory(1, 1, 0); break;
+            fs = make_shared<CashRebateReturnFactory>(1, 1, 0); break;
             case 2:
-            fs = new CashReturnRebateFactory(0.8, 1, 0); break;
+            fs = make_shared<CashReturnRebateFactory>(0.8, 1, 0); break;
             case 3:
-            fs = new CashRebateReturnFactory(0.7, 1, 0); break;
+            fs = make_shared<CashRebateReturnFactory>(0.7, 1, 0); break;
             case 4:
-            fs = new CashReturnRebateFactory(1, 300, 100); break;
+            fs = make_shared<CashReturnRebateFactory>(1, 300, 100); break;
             case 5:
-            fs = new CashReturnRebateFactory(0.8, 300, 100); break;
+            fs = make_shared<CashReturnRebateFactory>(0.8, 300, 100); break;
             case 6:
-            fs = new CashRebateReturnFactory(0.7, 200, 50); break;
+            fs = make_shared<CashRebateReturnFactory>(0.7, 200, 50); break;
         }
         cs = fs->createSalesMode();
     }
-    double getResult(double price, int num)
-    {
-        return cs->acceptCash(price, num);
-    }
-    ~CashContext()
-    {
-        delete fs->cn;
-        delete fs->cr1;
-        delete fs->cr2;
-        if (fs->cr2 != cs)
-            delete cs; // 避免重复删除
-        delete fs;
-    }
+
+    double getResult(double price, int num) { return cs->acceptCash(price, num); }
+
 private:
-    Sale *cs;
-    Factory *fs = 0;
+    shared_ptr<Sale> cs;
+    shared_ptr<Factory> fs;
 };
 
 int main()

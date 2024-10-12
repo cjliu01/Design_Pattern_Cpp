@@ -1,5 +1,6 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ class Expression
 {
 public:
     virtual void excute(char key, double value) = 0;
+    virtual ~Expression() = default;
     void interpret(PlayContext& context)
     {
         if (context.getPlayText().length() == 0)
@@ -34,7 +36,7 @@ public:
 class Note: public Expression
 {
 public:
-    void excute(char key, double value)
+    void excute(char key, double value) override 
     {
         string note;
         switch (key)
@@ -54,7 +56,7 @@ public:
 class Scale: public Expression
 {
 public:
-    void excute(char key, double value)
+    void excute(char key, double value) override
     {
         string scale;
         switch (static_cast<int>(value))
@@ -70,7 +72,7 @@ public:
 class Speed: public Expression
 {
 public:
-    void excute(char key, double value)
+    void excute(char key, double value) override
     {
         string speed;
         if (value < 500)
@@ -88,13 +90,13 @@ int main()
     PlayContext context;
     cout << "ÒôÀÖ¡ªÉÏº£Ì²: " << endl;
     context.setPlayText(string("T 500 O 2 E 0.5 G 0.5 D 3 E 0.5 G 0.5 A 0.5 O 3 C 1 O 2 A 0.5 G 1 C 0.5 E 0.5 D 3 "));
-    Expression* expression = nullptr;
+    shared_ptr<Expression> expression;
     while (context.getPlayText().length() > 0)
     {
         char key = context.getPlayText()[0];
         switch (key)
         {
-            case 'O': expression = new Scale(); break;
+            case 'O': expression = make_shared<Scale>(); break;
             case 'C': 
             case 'D': 
             case 'E': 
@@ -102,11 +104,10 @@ int main()
             case 'G': 
             case 'A': 
             case 'B':
-            case 'P': expression = new Note(); break;
-            case 'T': expression = new Speed(); break;
+            case 'P': expression = make_shared<Note>(); break;
+            case 'T': expression = make_shared<Speed>(); break;
         }
         expression->interpret(context);
-        delete expression;
     }
     return 0;
 }

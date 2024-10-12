@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -6,17 +7,16 @@ class Singleton
 {
 private:
     Singleton() {} ;
-    static Singleton *instance;
+    static unique_ptr<Singleton> instance;
 public:
     static Singleton* getInstance()
     {
         if (instance == nullptr)
-            instance = new Singleton;
-        return instance;
+            instance.reset(new Singleton);
+        return instance.get();
     }
-    ~Singleton() { delete instance; }
 };
-Singleton* Singleton::instance = nullptr;
+unique_ptr<Singleton> Singleton::instance = nullptr;
 
 int main()
 {
