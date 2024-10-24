@@ -1,4 +1,5 @@
 #include <iostream>
+#include <typeinfo>
 
 using namespace std;
 
@@ -7,7 +8,6 @@ class Country
 {
 public:
     Country(UnitedNations* unitedNations=nullptr): unitedNations(unitedNations) {}
-    virtual string getClassName() = 0;
     virtual ~Country() = default;
 protected:
     UnitedNations* unitedNations;
@@ -28,7 +28,6 @@ public:
     void declare(const string& message) { unitedNations->declare(message, *this);}
     void getMessage(const string& message) { cout << "美国获得对方信息" << message << endl; }
 
-    string getClassName() override { return string("USA"); }
 };
 
 class Iraq: public Country
@@ -39,7 +38,6 @@ public:
     void declare(const string& message) { unitedNations->declare(message, *this); }
     void getMessage(const string& message) { cout << "伊拉克获得对方信息" << message << endl; }
 
-    string getClassName() override { return string("Iraq"); }
 };
 
 class UnitedNationsSecurityCouncil: public UnitedNations
@@ -51,7 +49,7 @@ public:
 
     void declare(const string& message, Country& country) override
     {
-        if (country.getClassName() == countryUSA.getClassName())
+        if (typeid(country) == typeid(USA))
             countryIraq.getMessage(message);
         else
             countryUSA.getMessage(message);
